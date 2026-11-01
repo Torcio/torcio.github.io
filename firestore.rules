@@ -34,11 +34,15 @@ service cloud.firestore {
       allow read: if staff() || (cliente() && barcaId in get(profilo()).data.get('barche', []));
       allow write: if staff();
     }
+    // Le foto della roba in deposito che compaiono nel portale (foto.portale = la barca): le apre solo il cliente di quella barca
+    match /foto/{id} {
+      allow get: if cliente() && resource.data.get('portale', '') in get(profilo()).data.get('barche', []);
+    }
 
     // Le raccolte con i dati del cantiere (le stesse di COLLS in nm-fb.js)
     function raccolteCantiere() {
       return ['barche', 'lavori', 'scadenze', 'dipendenti', 'conferme', 'impostazioni', 'magazzino', 'movimenti', 'vari', 'modelli',
-        'checkBarca', 'checklist', 'opModelli', 'operazioni', 'mezzi', 'attrezzatura', 'programma', 'cariche', 'posti', 'richieste',
+        'checkBarca', 'checklist', 'opModelli', 'operazioni', 'mezzi', 'attrezzatura', 'deposito', 'programma', 'cariche', 'posti', 'richieste',
         'rifiuti', 'ritiri', 'scadCantiere', 'preventivi', 'assenze', 'kit', 'inventari', 'giri', 'cronometri', 'ditte', 'pin', 'controlliMezzi'];
     }
 
