@@ -210,7 +210,7 @@
   }
   function emit(L) {
     var s = snapOf(L); L.subs.slice().forEach(function (x) { try { x.next(s); } catch (e) { console.error(e); errScrivi(e); } });
-    if (L.name === 'barche' || L.name === 'lavori' || L.name === 'posti' || L.name === 'deposito') schedulePortale();
+    if (L.name === 'barche' || L.name === 'lavori' || L.name === 'posti' || L.name === 'deposito' || L.name === 'impostazioni') schedulePortale();
   }
   function docSnap(id, d) { return { id: id, exists: !!d, data: function () { return d ? clone(d) : undefined; } }; }
 
@@ -852,6 +852,8 @@
   }
   // roba del cliente in deposito: cosa, quanti e foto (dove è riposta e le note restano al cantiere)
   function depoPortale(bid) {
+    var I = LIVE.impostazioni ? LIVE.impostazioni.map : {}, st = I.strumenti;
+    if (!st || st._del || st.deposito !== true) return []; // Altro › Strumenti in più: spento di base
     var D = LIVE.deposito ? LIVE.deposito.map : {};
     return Object.keys(D).map(function (k) { return D[k]; }).filter(function (x) { return x.barcaId === bid && x.stato !== 'restituito'; })
       .sort(function (a, c) { return String(a.cosa || '').localeCompare(String(c.cosa || ''), 'it'); })
@@ -860,7 +862,7 @@
   function fotoDi(s) { var o = []; (s && s.deposito || []).forEach(function (x) { (x.foto || []).forEach(function (f) { o.push(f); }); }); return o; }
   async function syncPortale() {
     var ids = linkedBoats(); if (!ids.length) return;
-    var need = ['barche', 'lavori', 'posti', 'deposito', 'portale'];
+    var need = ['barche', 'lavori', 'posti', 'deposito', 'impostazioni', 'portale'];
     for (var i = 0; i < need.length; i++) { var L = live(need[i]); await L.start; await whenReady(L, 15000); }
     var cur = LIVE.portale.map;
     ids.forEach(function (bid) {
