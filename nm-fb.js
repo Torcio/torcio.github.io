@@ -215,7 +215,7 @@
   }
   function emit(L) {
     var s = snapOf(L); L.subs.slice().forEach(function (x) { try { x.next(s); } catch (e) { console.error(e); errScrivi(e); } });
-    if (L.name === 'barche' || L.name === 'lavori' || L.name === 'posti' || L.name === 'deposito' || L.name === 'impostazioni') schedulePortale();
+    if (L.name === 'barche' || L.name === 'lavori' || L.name === 'posti' || L.name === 'deposito' || L.name === 'impostazioni' || L.name === 'preventivi') schedulePortale();
   }
   function docSnap(id, d) { return { id: id, exists: !!d, data: function () { return d ? clone(d) : undefined; } }; }
 
