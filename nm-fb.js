@@ -654,6 +654,11 @@
       return setUser(id, { barche: bb });
     }));
   }
+  // barca venduta: i clienti scelti non vedono più questa barca nel portale
+  function staccaClienti(bid, ids) {
+    return Promise.all((ids || []).filter(function (id) { return UT[id]; }).map(function (id) { return setUser(id, { barche: (UT[id].barche || []).filter(function (b) { return b !== bid; }) }); }));
+  }
+  function nomeUtente(id) { var u = UT[id] || {}; return u.nome || u.email || id; }
   function closePanel() { PAN = null; var p = $('#nmpan'); if (p) p.remove(); }
   // sul computer il menù a sinistra resta visibile: toccando una sua voce il pannello si chiude
   document.addEventListener('click', function (e) { if ($('#nmpan') && e.target.closest && e.target.closest('#tabs [data-act]')) closePanel(); }, true);
@@ -1297,6 +1302,8 @@
     vista: attVista,
     clientiBarca: clientiBarca,
     spostaClienti: spostaClienti,
+    staccaClienti: staccaClienti,
+    nomeUtente: nomeUtente,
     foto: FOTO,
     tablet: {
       si: function () { return !!(ME && ME.tablet && ME.stato === 'attivo' && ME.ruolo !== 'cliente') && tabStr(); },
